@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.simple.gateway.orm.mapper.RouteMapper">
+
+    <resultMap id="BaseResultMap" type="com.simple.gateway.orm.entity.route.Route">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="app_id" jdbcType="BIGINT" property="appId"/>
+        <result column="protocol" jdbcType="VARCHAR" property="protocol"/>
+        <result column="method" jdbcType="VARCHAR" property="method"/>
+        <result column="uri" jdbcType="VARCHAR" property="uri"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="source" jdbcType="VARCHAR" property="source"/>
+        <result column="application" jdbcType="VARCHAR" property="application"/>
+        <result column="interface_class" jdbcType="VARCHAR" property="interfaceClass"/>
+        <result column="method_name" jdbcType="VARCHAR" property="methodName"/>
+        <result column="parameters" jdbcType="LONGVARCHAR" property="parameters"/>
+        <result column="timeout" jdbcType="BIGINT" property="timeout"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="env" jdbcType="VARCHAR" property="env"/>
+        <result column="tags" jdbcType="VARCHAR" property="tags"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+    </resultMap>
+
+    <sql id="AllColumns">
+        id, created_at, updated_at, app_id, protocol, method, uri, path, version, source, application, interface_class, method_name, parameters, timeout, status, env, tags, description
+    </sql>
+
+    <insert id="insert" parameterType="com.simple.gateway.orm.entity.route.Route" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_route (
+            created_at, updated_at, app_id, protocol, method, uri, path, version, source, application, interface_class, method_name, parameters, timeout, status, env, tags, description        )
+        VALUES (
+                   #{createdAt,jdbcType=TIMESTAMP} ,
+                   #{updatedAt,jdbcType=TIMESTAMP} ,
+                   #{appId,jdbcType=BIGINT} ,
+                   #{protocol,jdbcType=VARCHAR} ,
+                   #{method,jdbcType=VARCHAR} ,
+                   #{uri,jdbcType=VARCHAR} ,
+                   #{path,jdbcType=VARCHAR} ,
+                   #{version,jdbcType=VARCHAR} ,
+                   #{source,jdbcType=VARCHAR} ,
+                   #{application,jdbcType=VARCHAR} ,
+                   #{interfaceClass,jdbcType=VARCHAR} ,
+                   #{methodName,jdbcType=VARCHAR} ,
+                   #{parameters,jdbcType=LONGVARCHAR} ,
+                   #{timeout,jdbcType=BIGINT} ,
+                   #{status,jdbcType=VARCHAR} ,
+                   #{env,jdbcType=VARCHAR} ,
+                   #{tags,jdbcType=VARCHAR} ,
+                   #{description,jdbcType=VARCHAR}
+               )
+
+    </insert>
+
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_route (
+            created_at, updated_at, app_id, protocol, method, uri, path, version, source, application, interface_class, method_name, parameters, timeout, status, env, tags, description         )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.createdAt,jdbcType=TIMESTAMP} ,
+                #{item.updatedAt,jdbcType=TIMESTAMP} ,
+                #{item.appId,jdbcType=BIGINT} ,
+                #{item.protocol,jdbcType=VARCHAR} ,
+                #{item.method,jdbcType=VARCHAR} ,
+                #{item.uri,jdbcType=VARCHAR} ,
+                #{item.path,jdbcType=VARCHAR} ,
+                #{item.version,jdbcType=VARCHAR} ,
+                #{item.source,jdbcType=VARCHAR} ,
+                #{item.application,jdbcType=VARCHAR} ,
+                #{item.interfaceClass,jdbcType=VARCHAR} ,
+                #{item.methodName,jdbcType=VARCHAR} ,
+                #{item.parameters,jdbcType=LONGVARCHAR} ,
+                #{item.timeout,jdbcType=BIGINT} ,
+                #{item.status,jdbcType=VARCHAR} ,
+                #{item.env,jdbcType=VARCHAR} ,
+                #{item.tags,jdbcType=VARCHAR} ,
+                #{item.description,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+
+        DELETE FROM gateway_route
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </delete>
+
+
+    <delete id="deleteByIds" parameterType="java.util.List">
+
+        DELETE FROM gateway_route
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </delete>
+
+
+    <update id="update" parameterType="com.simple.gateway.orm.entity.route.Route">
+
+        UPDATE gateway_route
+        SET
+            created_at = #{createdAt,jdbcType=TIMESTAMP} ,
+            updated_at = #{updatedAt,jdbcType=TIMESTAMP} ,
+            app_id = #{appId,jdbcType=BIGINT} ,
+            protocol = #{protocol,jdbcType=VARCHAR} ,
+            method = #{method,jdbcType=VARCHAR} ,
+            uri = #{uri,jdbcType=VARCHAR} ,
+            path = #{path,jdbcType=VARCHAR} ,
+            version = #{version,jdbcType=VARCHAR} ,
+            source = #{source,jdbcType=VARCHAR} ,
+            application = #{application,jdbcType=VARCHAR} ,
+            interface_class = #{interfaceClass,jdbcType=VARCHAR} ,
+            method_name = #{methodName,jdbcType=VARCHAR} ,
+            parameters = #{parameters,jdbcType=LONGVARCHAR} ,
+            timeout = #{timeout,jdbcType=BIGINT} ,
+            status = #{status,jdbcType=VARCHAR} ,
+            env = #{env,jdbcType=VARCHAR} ,
+            tags = #{tags,jdbcType=VARCHAR} ,
+            description = #{description,jdbcType=VARCHAR}
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </update>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_route
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </select>
+
+
+    <select id="selectByUri" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_route
+        WHERE uri = #{uri}
+        LIMIT 1
+
+    </select>
+
+
+    <select id="selectByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_route
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </select>
+
+
+    <select id="page" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_route
+        WHERE app_id = #{appId}
+
+        <if test="keyword != null and keyword !=''">
+            AND (
+                path LIKE CONCAT('%',#{keyword},'%') OR
+                tags LIKE CONCAT('%',#{keyword},'%')
+            )
+        </if>
+
+        <choose>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'ASC'">
+                ORDER BY created_at ASC
+            </when>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'DESC'">
+                ORDER BY created_at DESC
+            </when>
+
+
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'ASC'">
+                ORDER BY updated_at ASC
+            </when>
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'DESC'">
+                ORDER BY updated_at DESC
+            </when>
+
+            <otherwise></otherwise>
+        </choose>
+
+    </select>
+
+</mapper>

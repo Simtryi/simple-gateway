@@ -1,0 +1,87 @@
+CREATE TABLE `gateway_app` (
+    `id`bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `name` varchar(32) DEFAULT NULL COMMENT '应用名称',
+    `code` varchar(128) NOT NULL COMMENT '应用code，全局唯一',
+    `description` varchar(256) DEFAULT NULL COMMENT '应用描述',
+    `status`  VARCHAR(32) NOT NULL DEFAULT 'OK' COMMENT '应用状态 OK: 开启 DISABLED: 禁用',
+    `owner_nickname` varchar(100) DEFAULT NULL COMMENT '负责人花名',
+    `owner_no` varchar(100) DEFAULT NULL COMMENT '负责人工号',
+    `updated_owner_nickname` VARCHAR(100) DEFAULT NULL COMMENT '更新人花名',
+    `updated_owner_no` VARCHAR(100) DEFAULT NULL COMMENT '更新人工号',
+    PRIMARY KEY (`id`),
+    KEY `ix_created_at` (`created_at`),
+    KEY `ix_updated_at` (`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用表';
+
+CREATE TABLE `gateway_route` (
+    `id`bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `app_id` bigint(20) NOT NULL COMMENT '应用Id',
+    `protocol` varchar(32) NOT NULL COMMENT '路由协议',
+    `method` varchar(32) NOT NULL COMMENT '路由方法',
+    `uri` varchar(1024) NOT NULL COMMENT '路由uri',
+    `path` varchar(1024) NOT NULL COMMENT '路由路径',
+    `version` varchar(32) DEFAULT NULL COMMENT '路由版本',
+    `source` varchar(32) DEFAULT NULL COMMENT 'Http源站',
+    `application` varchar(256) DEFAULT NULL COMMENT 'RPC应用',
+    `interface_class` varchar(1024) DEFAULT NULL COMMENT 'RPC接口',
+    `method_name` varchar(256) DEFAULT NULL COMMENT 'RPC方法名',
+    `parameters` text COMMENT 'RPC参数',
+    `timeout` bigint(64) DEFAULT NULL COMMENT '超时时间',
+    `status`  VARCHAR(32) NOT NULL DEFAULT 'OK' COMMENT '路由状态 OK: 正常，DISABLED: 禁用',
+    `env`  VARCHAR(32) NOT NULL DEFAULT 'DEV' COMMENT '路由环境 DEV: 开发，PRE: 预发，GRAY: 灰度，PROD: 生产',
+    `tags` varchar(256) DEFAULT NULL COMMENT '路由标签, 以 "," 号分隔',
+    `description` varchar(256) DEFAULT NULL COMMENT '路由描述',
+    PRIMARY KEY (`id`),
+    KEY `ix_created_at` (`created_at`),
+    KEY `ix_updated_at` (`updated_at`),
+    KEY `ix_app_id` (`app_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='路由表';
+
+CREATE TABLE `gateway_plugin` (
+    `id`bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `route_id` bigint(20) NOT NULL COMMENT '路由Id',
+    `allow_load_balance` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用负载均衡插件',
+    `load_balance_config` varchar(1024) DEFAULT NULL COMMENT '负载均衡配置',
+    `allow_auth_token` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用鉴权插件',
+    `auth_token_config` varchar(1024) DEFAULT NULL COMMENT '鉴权配置',
+    `allow_white_list` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用白名单插件',
+    `white_list_config` varchar(1024) DEFAULT NULL COMMENT '白名单配置',
+    `allow_black_list` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用黑名单插件',
+    `black_list_config` varchar(1024) DEFAULT NULL COMMENT '黑名单配置',
+    `allow_rate_limit` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用限流插件',
+    `rate_limit_config` varchar(1024) DEFAULT NULL COMMENT '限流配置',
+    `allow_cache` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用缓存插件',
+    `cache_config` varchar(1024) DEFAULT NULL COMMENT '缓存配置',
+    `allow_sentinel` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否使用熔断器插件',
+    `sentinel_config` varchar(1024) DEFAULT NULL COMMENT '熔断器配置',
+    PRIMARY KEY (`id`),
+    KEY `ix_created_at` (`created_at`),
+    KEY `ix_updated_at` (`updated_at`),
+    KEY `ix_route_id` (`route_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='插件表';
+
+CREATE TABLE `gateway_user` (
+    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `username` varchar(100) DEFAULT NULL COMMENT '用户名',
+    `password` varchar(100) DEFAULT NULL COMMENT '密码',
+    `nickname` varchar(100) DEFAULT NULL COMMENT '花名',
+    `no` varchar(100) NOT NULL COMMENT '工号',
+    `department` varchar(100) DEFAULT NULL COMMENT '部门',
+    `description` varchar(512) DEFAULT NULL COMMENT '描述',
+    `avatar` varchar(256) DEFAULT NULL COMMENT '头像',
+    `last_time` datetime NOT NULL COMMENT '上次活跃时间',
+    `status` varchar(100) DEFAULT 'OK' COMMENT '状态',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_no` (`no`),
+    KEY `ix_updated_at` (`updated_at`),
+    KEY `ix_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.simple.gateway.orm.mapper.PluginMapper">
+
+    <resultMap id="BaseResultMap" type="com.simple.gateway.orm.entity.plugin.Plugin">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="allow_load_balance" jdbcType="TINYINT" property="allowLoadBalance"/>
+        <result column="load_balance_config" jdbcType="VARCHAR" property="loadBalanceConfig"/>
+        <result column="allow_auth_token" jdbcType="TINYINT" property="allowAuthToken"/>
+        <result column="auth_token_config" jdbcType="VARCHAR" property="authTokenConfig"/>
+        <result column="allow_white_list" jdbcType="TINYINT" property="allowWhiteList"/>
+        <result column="white_list_config" jdbcType="VARCHAR" property="whiteListConfig"/>
+        <result column="allow_black_list" jdbcType="TINYINT" property="allowBlackList"/>
+        <result column="black_list_config" jdbcType="VARCHAR" property="blackListConfig"/>
+        <result column="allow_rate_limit" jdbcType="TINYINT" property="allowRateLimit"/>
+        <result column="rate_limit_config" jdbcType="VARCHAR" property="rateLimitConfig"/>
+        <result column="allow_cache" jdbcType="TINYINT" property="allowCache"/>
+        <result column="cache_config" jdbcType="VARCHAR" property="cacheConfig"/>
+        <result column="allow_sentinel" jdbcType="TINYINT" property="allowSentinel"/>
+        <result column="sentinel_config" jdbcType="VARCHAR" property="sentinelConfig"/>
+    </resultMap>
+
+    <sql id="AllColumns">
+        id, created_at, updated_at, route_id,
+        allow_load_balance, load_balance_config,
+        allow_auth_token, auth_token_config,
+        allow_white_list, white_list_config,
+        allow_black_list, black_list_config,
+        allow_rate_limit, rate_limit_config,
+        allow_cache, cache_config,
+        allow_sentinel, sentinel_config
+    </sql>
+
+    <insert id="insert" parameterType="com.simple.gateway.orm.entity.plugin.Plugin" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_plugin (
+            created_at, updated_at, route_id,
+            allow_load_balance, load_balance_config,
+            allow_auth_token, auth_token_config,
+            allow_white_list, white_list_config,
+            allow_black_list, black_list_config,
+            allow_rate_limit, rate_limit_config,
+            allow_cache, cache_config,
+            allow_sentinel, sentinel_config )
+        VALUES (
+                   #{createdAt,jdbcType=TIMESTAMP} ,
+                   #{updatedAt,jdbcType=TIMESTAMP} ,
+                   #{routeId,jdbcType=BIGINT} ,
+                   #{allowLoadBalance,jdbcType=TINYINT} ,
+                   #{loadBalanceConfig,jdbcType=VARCHAR} ,
+                   #{allowAuthToken,jdbcType=TINYINT} ,
+                   #{authTokenConfig,jdbcType=VARCHAR} ,
+                   #{allowWhiteList,jdbcType=TINYINT} ,
+                   #{whiteListConfig,jdbcType=VARCHAR} ,
+                   #{allowBlackList,jdbcType=TINYINT} ,
+                   #{blackListConfig,jdbcType=VARCHAR} ,
+                   #{allowRateLimit,jdbcType=TINYINT} ,
+                   #{rateLimitConfig,jdbcType=VARCHAR} ,
+                   #{allowCache,jdbcType=TINYINT} ,
+                   #{cacheConfig,jdbcType=VARCHAR} ,
+                   #{allowSentinel,jdbcType=TINYINT} ,
+                   #{sentinelConfig,jdbcType=VARCHAR}
+               )
+
+    </insert>
+
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_plugin (
+            created_at, updated_at, route_id,
+            allow_load_balance, load_balance_config,
+            allow_auth_token, auth_token_config,
+            allow_white_list, white_list_config,
+            allow_black_list, black_list_config,
+            allow_rate_limit, rate_limit_config,
+            allow_cache, cache_config,
+            allow_sentinel, sentinel_config )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.createdAt,jdbcType=TIMESTAMP} ,
+            #{item.updatedAt,jdbcType=TIMESTAMP} ,
+            #{item.routeId,jdbcType=BIGINT} ,
+            #{item.allowLoadBalance,jdbcType=TINYINT} ,
+            #{item.loadBalanceConfig,jdbcType=VARCHAR} ,
+            #{item.allowAuthToken,jdbcType=TINYINT} ,
+            #{item.authTokenConfig,jdbcType=VARCHAR} ,
+            #{item.allowWhiteList,jdbcType=TINYINT} ,
+            #{item.whiteListConfig,jdbcType=VARCHAR} ,
+            #{item.allowBlackList,jdbcType=TINYINT} ,
+            #{item.blackListConfig,jdbcType=VARCHAR} ,
+            #{item.allowRateLimit,jdbcType=TINYINT} ,
+            #{item.rateLimitConfig,jdbcType=VARCHAR} ,
+            #{item.allowCache,jdbcType=TINYINT} ,
+            #{item.cacheConfig,jdbcType=VARCHAR} ,
+            #{item.allowSentinel,jdbcType=TINYINT} ,
+            #{item.sentinelConfig,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+
+        DELETE FROM gateway_plugin
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </delete>
+
+
+    <delete id="deleteByIds" parameterType="java.util.List">
+
+        DELETE FROM gateway_plugin
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </delete>
+
+
+    <update id="update" parameterType="com.simple.gateway.orm.entity.plugin.Plugin">
+
+        UPDATE gateway_plugin
+        SET
+            created_at = #{createdAt,jdbcType=TIMESTAMP} ,
+            updated_at = #{updatedAt,jdbcType=TIMESTAMP} ,
+            route_id = #{routeId,jdbcType=BIGINT} ,
+            allow_load_balance = #{allowLoadBalance,jdbcType=TINYINT} ,
+            load_balance_config = #{loadBalanceConfig,jdbcType=VARCHAR} ,
+            allow_auth_token = #{allowAuthToken,jdbcType=TINYINT} ,
+            auth_token_config = #{authTokenConfig,jdbcType=VARCHAR} ,
+            allow_white_list = #{allowWhiteList,jdbcType=TINYINT} ,
+            white_list_config = #{whiteListConfig,jdbcType=VARCHAR} ,
+            allow_black_list = #{allowBlackList,jdbcType=TINYINT} ,
+            black_list_config = #{blackListConfig,jdbcType=VARCHAR} ,
+            allow_rate_limit = #{allowRateLimit,jdbcType=TINYINT} ,
+            rate_limit_config = #{rateLimitConfig,jdbcType=VARCHAR} ,
+            allow_cache = #{allowCache,jdbcType=TINYINT} ,
+            cache_config = #{cacheConfig,jdbcType=VARCHAR} ,
+            allow_sentinel = #{allowSentinel,jdbcType=TINYINT} ,
+            sentinel_config = #{sentinelConfig,jdbcType=VARCHAR}
+
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </update>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_plugin
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </select>
+
+
+    <select id="selectByRouteId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_plugin
+        WHERE route_id = #{routeId}
+        LIMIT 1
+    </select>
+
+
+    <select id="selectByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_plugin
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </select>
+
+
+    <select id="page" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_plugin
+
+        <choose>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'ASC'">
+                ORDER BY created_at ASC
+            </when>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'DESC'">
+                ORDER BY created_at DESC
+            </when>
+
+
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'ASC'">
+                ORDER BY updated_at ASC
+            </when>
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'DESC'">
+                ORDER BY updated_at DESC
+            </when>
+
+            <otherwise></otherwise>
+        </choose>
+
+    </select>
+
+</mapper>

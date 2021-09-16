@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.simple.gateway.orm.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.simple.gateway.orm.entity.user.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="no" jdbcType="VARCHAR" property="no"/>
+        <result column="department" jdbcType="VARCHAR" property="department"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="last_time" jdbcType="TIMESTAMP" property="lastTime"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+    </resultMap>
+
+    <sql id="AllColumns">
+        id, created_at, updated_at, username, password, nickname, no, department, description, avatar, last_time, status
+    </sql>
+
+    <insert id="insert" parameterType="com.simple.gateway.orm.entity.user.User" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_user (
+            created_at, updated_at, username, password, nickname, no, department, description, avatar, last_time, status        )
+        VALUES (
+                   #{createdAt,jdbcType=TIMESTAMP} ,
+                   #{updatedAt,jdbcType=TIMESTAMP} ,
+                   #{username,jdbcType=VARCHAR} ,
+                   #{password,jdbcType=VARCHAR} ,
+                   #{nickname,jdbcType=VARCHAR} ,
+                   #{no,jdbcType=VARCHAR} ,
+                   #{department,jdbcType=VARCHAR} ,
+                   #{description,jdbcType=VARCHAR} ,
+                   #{avatar,jdbcType=VARCHAR} ,
+                   #{lastTime,jdbcType=TIMESTAMP} ,
+                   #{status,jdbcType=VARCHAR}
+               )
+
+    </insert>
+
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_user (
+            created_at, updated_at, username, password, nickname, no, department, description, avatar, last_time, status          )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.createdAt,jdbcType=TIMESTAMP} ,
+                #{item.updatedAt,jdbcType=TIMESTAMP} ,
+                #{item.username,jdbcType=VARCHAR} ,
+                #{item.password,jdbcType=VARCHAR} ,
+                #{item.nickname,jdbcType=VARCHAR} ,
+                #{item.no,jdbcType=VARCHAR} ,
+                #{item.department,jdbcType=VARCHAR} ,
+                #{item.description,jdbcType=VARCHAR} ,
+                #{item.avatar,jdbcType=VARCHAR} ,
+                #{item.lastTime,jdbcType=TIMESTAMP} ,
+                #{item.status,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+
+        DELETE FROM gateway_user
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </delete>
+
+
+    <delete id="deleteByIds" parameterType="java.util.List">
+
+        DELETE FROM gateway_user
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </delete>
+
+
+    <update id="update" parameterType="com.simple.gateway.orm.entity.user.User">
+
+        UPDATE gateway_user
+        SET
+            created_at = #{createdAt,jdbcType=TIMESTAMP} ,
+            updated_at = #{updatedAt,jdbcType=TIMESTAMP} ,
+            username = #{username,jdbcType=VARCHAR} ,
+            password = #{password,jdbcType=VARCHAR} ,
+            nickname = #{nickname,jdbcType=VARCHAR} ,
+            no = #{no,jdbcType=VARCHAR} ,
+            department = #{department,jdbcType=VARCHAR} ,
+            description = #{description,jdbcType=VARCHAR} ,
+            avatar = #{avatar,jdbcType=VARCHAR} ,
+            last_time = #{lastTime,jdbcType=TIMESTAMP} ,
+            status = #{status,jdbcType=VARCHAR}
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </update>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_user
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </select>
+
+
+    <select id="selectByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_user
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </select>
+
+
+    <select id="page" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_user
+
+        <where>
+            <if test="username != null and username !=''">
+                AND username LIKE CONCAT('%',#{username},'%')
+            </if>
+            <if test="nickname != null and nickname !=''">
+                AND nickname LIKE CONCAT('%',#{nickname},'%')
+            </if>
+            <if test="no != null and no !=''">
+                AND no = #{no}
+            </if>
+            <if test="department != null and department !=''">
+                AND department LIKE CONCAT('%',#{department},'%')
+            </if>
+        </where>
+
+        <choose>
+
+
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'ASC'">
+                ORDER BY created_at ASC
+            </when>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'DESC'">
+                ORDER BY created_at DESC
+            </when>
+
+
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'ASC'">
+                ORDER BY updated_at ASC
+            </when>
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'DESC'">
+                ORDER BY updated_at DESC
+            </when>
+
+
+            <when test="orderLastTime != null and orderLastTime.name() == 'ASC'">
+                ORDER BY last_time ASC
+            </when>
+            <when test="orderLastTime != null and orderLastTime.name() == 'DESC'">
+                ORDER BY last_time DESC
+            </when>
+
+
+            <otherwise></otherwise>
+        </choose>
+
+    </select>
+
+
+    <select id="selectByNickname" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns"/>
+        FROM gateway_user
+        WHERE nickname = #{nickname}
+
+    </select>
+
+</mapper>

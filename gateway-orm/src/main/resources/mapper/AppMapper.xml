@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.simple.gateway.orm.mapper.AppMapper">
+
+    <resultMap id="BaseResultMap" type="com.simple.gateway.orm.entity.app.App">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="owner_nickname" jdbcType="VARCHAR" property="ownerNickname"/>
+        <result column="owner_no" jdbcType="VARCHAR" property="ownerNo"/>
+        <result column="updated_owner_nickname" jdbcType="VARCHAR" property="updatedOwnerNickname"/>
+        <result column="updated_owner_no" jdbcType="VARCHAR" property="updatedOwnerNo"/>
+    </resultMap>
+
+    <sql id="AllColumns">
+        id, created_at, updated_at, name, code, description, status, owner_nickname, owner_no, updated_owner_nickname, updated_owner_no
+    </sql>
+
+    <insert id="insert" parameterType="com.simple.gateway.orm.entity.app.App" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_app (
+            created_at, updated_at, name, code, description, status, owner_nickname, owner_no, updated_owner_nickname, updated_owner_no )
+        VALUES (
+                   #{createdAt,jdbcType=TIMESTAMP} ,
+                   #{updatedAt,jdbcType=TIMESTAMP} ,
+                   #{name,jdbcType=VARCHAR} ,
+                   #{code,jdbcType=VARCHAR} ,
+                   #{description,jdbcType=VARCHAR} ,
+                   #{status,jdbcType=VARCHAR} ,
+                   #{ownerNickname,jdbcType=VARCHAR} ,
+                   #{ownerNo,jdbcType=VARCHAR} ,
+                   #{updatedOwnerNickname,jdbcType=VARCHAR} ,
+                   #{updatedOwnerNo,jdbcType=VARCHAR}
+               )
+
+    </insert>
+
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO gateway_app (
+            created_at, updated_at, name, code, description, status, owner_nickname, owner_no, updated_owner_nickname, updated_owner_no )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.createdAt,jdbcType=TIMESTAMP} ,
+                #{item.updatedAt,jdbcType=TIMESTAMP} ,
+                #{item.name,jdbcType=VARCHAR} ,
+                #{item.code,jdbcType=VARCHAR} ,
+                #{item.description,jdbcType=VARCHAR} ,
+                #{item.status,jdbcType=VARCHAR} ,
+                #{item.ownerNickname,jdbcType=VARCHAR} ,
+                #{item.ownerNo,jdbcType=VARCHAR} ,
+                #{item.updatedOwnerNickname,jdbcType=VARCHAR} ,
+                #{item.updatedOwnerNo,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+
+        DELETE FROM gateway_app
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </delete>
+
+
+    <delete id="deleteByIds" parameterType="java.util.List">
+
+        DELETE FROM gateway_app
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </delete>
+
+
+    <update id="update" parameterType="com.simple.gateway.orm.entity.app.App">
+
+        UPDATE gateway_app
+        SET
+            created_at = #{createdAt,jdbcType=TIMESTAMP} ,
+            updated_at = #{updatedAt,jdbcType=TIMESTAMP} ,
+            name = #{name,jdbcType=VARCHAR} ,
+            code = #{code,jdbcType=VARCHAR} ,
+            description = #{description,jdbcType=VARCHAR} ,
+            status = #{status,jdbcType=VARCHAR} ,
+            owner_nickname = #{ownerNickname,jdbcType=VARCHAR} ,
+            owner_no = #{ownerNo,jdbcType=VARCHAR} ,
+            updated_owner_nickname = #{updatedOwnerNickname,jdbcType=VARCHAR} ,
+            updated_owner_no = #{updatedOwnerNo,jdbcType=VARCHAR}
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </update>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_app
+        WHERE id = #{id,jdbcType=BIGINT}
+
+    </select>
+
+
+    <select id="selectByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_app
+        WHERE
+        <choose>
+            <when test="list==null || list.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                id IN
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+        select
+        <include refid="AllColumns"/>
+        from gateway_app
+        where code = #{code,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="page" resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="AllColumns" />
+        FROM gateway_app
+        <where>
+            <if test="keyword != null and keyword !=''">
+                AND (
+                    name LIKE CONCAT('%',#{keyword},'%') OR
+                    code LIKE CONCAT('%',#{keyword},'%')
+                )
+            </if>
+            <if test="name != null and name !=''">
+                AND name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="code != null and code !=''">
+                AND code LIKE CONCAT('%',#{code},'%')
+            </if>
+        </where>
+
+        <choose>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'ASC'">
+                ORDER BY created_at ASC
+            </when>
+            <when test="orderCreatedAt != null and orderCreatedAt.name() == 'DESC'">
+                ORDER BY created_at DESC
+            </when>
+
+
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'ASC'">
+                ORDER BY updated_at ASC
+            </when>
+            <when test="orderUpdatedAt != null and orderUpdatedAt.name() == 'DESC'">
+                ORDER BY updated_at DESC
+            </when>
+
+            <otherwise></otherwise>
+        </choose>
+
+    </select>
+
+</mapper>

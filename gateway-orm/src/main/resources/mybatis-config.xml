@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--日志，本地用于调试-->
+    <!--<settings>-->
+    <!--    <setting name="logImpl" value="STDOUT_LOGGING" />-->
+    <!--</settings>-->
+
+    <plugins>
+
+        <!-- mybatis分页拦截器  -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="helperDialect" value="mysql"/>
+            <property name="offsetAsPageNum" value="false"/>
+            <property name="rowBoundsWithCount" value="false"/>
+            <property name="pageSizeZero" value="false"/>
+            <property name="reasonable" value="false"/>
+            <property name="returnPageInfo" value="none"/>
+            <property name="supportMethodsArguments" value="true"/>
+            <property name="params" value="pageNum=pageNum;pageSize=pageSize;"/>
+        </plugin>
+
+    </plugins>
+
+</configuration>
